@@ -1,6 +1,8 @@
 package com.education.aitgbot.tgbot.bot;
 
+import com.education.aitgbot.tgbot.controllers.BotController;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -18,24 +20,20 @@ public class TelegramBot extends TelegramLongPollingBot {
         super(botToken);
     }
 
+    @Autowired
+    private BotController botController;
+
     @Override
     public void onUpdateReceived(Update update) {
-        log.info(update.toString());
-        if (!update.hasMessage()) return;
-
-        String message = update.getMessage().getText();
-        Long chatId = update.getMessage().getChatId();
-
-        sendMessage(chatId, message);
+        log.debug(update.toString());
+        sendMessage(botController.handleInputMessage(update.getMessage()));
     }
 
-    private void sendMessage(Long chatId, String text) {
-        String chatIdStr = String.valueOf(chatId);
-        SendMessage sendMessage = new SendMessage(chatIdStr, text);
+    private void sendMessage(SendMessage sendMessage) {
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            log.error("Send message error!", e);
         }
     }
 
