@@ -1,0 +1,6 @@
+server:
+  port: 8110
+
+bot:
+  name: speakinghatbot
+  token: 6713150958:AAFTQgCnD-XzCoAAnm2B3d6IifoFTQmLr8E
